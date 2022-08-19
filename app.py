@@ -36,10 +36,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 db.create_all()
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
-
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 #----------------------------------------------------------------------------#
 # Filters.
@@ -402,25 +398,10 @@ def create_show_submission():
   error = False
   try:
     start_time = request.form.get('start_time')
-    new_start_time = ''
-    print(start_time)
-
-    for character in start_time:
-      if character == '-':
-        new_start_time += '/'
-      else:
-        new_start_time += character
-    print(new_start_time)
-    new_start_time = new_start_time[2:]
-    day = new_start_time[6:8]
-    year = new_start_time[0:2]
-    new_start_time = day + new_start_time[2:6] + year + new_start_time[8:]
-    print(new_start_time)
-
     new_show = Show(
       artist_id = request.form.get('artist_id'),
       venue_id= request.form.get('venue_id'),
-      start_time = new_start_time
+      start_time = start_time
     )
 
     print(new_show)

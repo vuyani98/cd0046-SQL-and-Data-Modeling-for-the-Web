@@ -6,12 +6,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+#----------------------------------------------------------------------------#
+# Models.
+#----------------------------------------------------------------------------#
 class Show(db.Model):
   __tablename__ = 'shows'
   id = db.Column(db.Integer, primary_key=True)
   artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
   venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable=False)
-  start_time = db.Column(db.String)
+  start_time = db.Column(db.DateTime)
 
   @hybrid_property
   def artist_image_link(self):
@@ -53,13 +56,9 @@ class Venue(db.Model):
     @hybrid_property
     def upcoming_shows(self):
       list_of_shows = []
-
-      for show in self.shows:
-        now = datetime.now()
-
-        if datetime.strptime(show.start_time, '%d/%m/%y %H:%M:%S') > now:
-          list_of_shows.append(show)
-
+      now = datetime.now()
+      list_of_shows = db.session.query(Show).join(Venue).filter(Show.artist_id==self.id).where(Show.start_time > now).all()
+      print(list_of_shows)
       return list_of_shows
 
     @hybrid_property
@@ -69,13 +68,8 @@ class Venue(db.Model):
     @hybrid_property
     def past_shows(self):
       list_of_shows = []
-
-      for show in self.shows:
-        now = datetime.now()
-
-        if datetime.strptime(show.start_time, '%d/%m/%y %H:%M:%S') < now:
-          list_of_shows.append(show)
-
+      now = datetime.now()
+      list_of_shows = db.session.query(Show).join(Venue).filter(Show.artist_id==self.id).where(Show.start_time < now).all()
       return list_of_shows
 
     @hybrid_property
@@ -101,16 +95,13 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     shows = db.relationship('Show', backref='artist', collection_class=list)
 
+
     @hybrid_property
     def upcoming_shows(self):
       list_of_shows = []
-
-      for show in self.shows:
-        now = datetime.now()
-
-        if datetime.strptime(show.start_time, '%d/%m/%y %H:%M:%S') > now:
-          list_of_shows.append(show)
-
+      now = datetime.now()
+      list_of_shows = db.session.query(Show).join(Artist).filter(Show.artist_id==self.id).where(Show.start_time > now).all()
+      print(list_of_shows)
       return list_of_shows
 
     @hybrid_property
@@ -120,18 +111,14 @@ class Artist(db.Model):
     @hybrid_property
     def past_shows(self):
       list_of_shows = []
-
-      for show in self.shows:
-        now = datetime.now()
-
-        if datetime.strptime(show.start_time, '%d/%m/%y %H:%M:%S') < now:
-          list_of_shows.append(show)
-
+      now = datetime.now()
+      list_of_shows = db.session.query(Show).join(Artist).filter(Show.artist_id==self.id).where(Show.start_time < now).all()
       return list_of_shows
     
     @hybrid_property
     def past_shows_count(self):
       return len(self.past_shows)
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
+
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
