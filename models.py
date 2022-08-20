@@ -53,7 +53,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     shows = db.relationship('Show', backref='venue', cascade="all, delete")
   
-    @hybrid_property
+'''   @hybrid_property
     def upcoming_shows(self):
       list_of_shows = []
       now = datetime.now()
@@ -75,7 +75,7 @@ class Venue(db.Model):
     @hybrid_property
     def past_shows_count(self):
       return len(self.past_shows) 
-
+'''
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
@@ -96,7 +96,7 @@ class Artist(db.Model):
     shows = db.relationship('Show', backref='artist', collection_class=list)
 
 
-    @hybrid_property
+'''  @hybrid_property
     def upcoming_shows(self):
       list_of_shows = []
       now = datetime.now()
@@ -119,6 +119,6 @@ class Artist(db.Model):
     def past_shows_count(self):
       return len(self.past_shows)
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
+'''
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
